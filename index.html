@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>jquery自定义进度条 -- html5原生</title>
+    <style>
+  
+       input[type='text']{
+           width:47px;
+           height:30px;
+           line-height: 30px;
+       }
+
+       progress{
+           background: #cccccc;
+           width:202px;
+           height:6px;
+           border:1px solid #ddd;
+           border-radius: 6px;
+           cursor: pointer;
+           position: relative;
+           margin-right:10px;
+           
+       }
+       progress::-moz-progress-bar {  background: #ccc}
+       progress::-webkit-progress-value { 
+           background: red;
+           height:6px;
+           border-radius: 6px 0 0 6px;
+           position: absolute; 
+           top:-1px;
+       }
+       progress::-webkit-progress-bar { 
+           background: #ccc
+       }
+       .progress-circle1{
+           width:14px;
+           height:14px;
+           background: #ffffff;
+           border:1px solid #ccc;
+           box-shadow: 0 0 5px 0  #000 0.27;
+           border-radius: 50%;
+           position: absolute;
+           top:15px;
+           cursor: pointer;
+           left:0px;
+       }
+    </style>
+</head>
+<body>
+  
+    
+    <div class="box-one" style="position:relative;margin-top:10px;">
+       <progress value="" max="100"> </progress> <!--h5 进度条-->
+       <div class="progress-circle1"></div>
+       <input type="text" value=""><!--显示进度值-->
+    </div>
+   
+   
+    <script type="text/javascript" src="jquery.js"></script>
+    <script>
+        // var lastX, NewX, that, thewidth = 0;
+		// 		var auto = false;//控制是否可以拖动的; false表示不能拖动
+		// 		$('.box-nine').on('mousedown', '.progress-circle', function(e) {
+		// 			lastX = e.clientX;  //鼠标按下时距离浏览器的x轴距离
+		// 			e.preventDefault(); //阻止默认事件
+		// 			that = $(this);  //保存当前this
+		// 			thewidth = that.prev().width() || $(".progress-bar").width();  // 获取当前进度的宽度，也就是红色条的宽度 
+		// 			auto = true;  //鼠标按下的时候设置为true，允许拖动
+		// 		})
+		// 		$(document).on('mousemove', function (e) {  //记住，这里一定要绑定在document上，防止拖动过快造成问题
+		// 			if (auto) {
+		// 				e.preventDefault();
+		// 				NewX = e.clientX; //拖动后，重新获取鼠标距离浏览器的x轴距离
+		// 				var mcs = NewX - lastX; //由mcs的值大小确定鼠标是向左滑动还是右滑动;
+		// 				var differ = $(".progress").width() - $(".progress-circle").width(); //圆圈能拖动的最大距离 红色进度条的最大宽度就是整个进度条200px，而圆圈能滑动的最大距离要减去本身的宽度
+		// 				if (mcs > 0) {//判断左滑还是右滑
+		// 					that.prev().css('width', mcs + thewidth < differ ? mcs + thewidth : $(".progress").width()); //每拖动一次，都要加上当前红色条的宽度    红色条宽度=每次的鼠标差+ 上一次红色条宽度
+		// 				    that.css('left', mcs + thewidth < differ ? mcs + thewidth : differ);  
+		// 				} else {
+		// 					that.prev().css('width', thewidth + mcs - that.width() > 0 ? thewidth + mcs - that.width() : 0);
+		// 					that.css('left', thewidth + mcs - that.width() > 0 ? thewidth + mcs - that.width() : 0);
+		// 				}
+		// 				var val = that.prev().width();
+		// 				that.parents('.box-nine').find('input').val(Math.ceil(val / 2));//实时将值显示在Input框   这里是模拟音量 0-100的值
+		// 			}
+		// 		})
+		// 		$(document).on('mouseup', function(e) {
+		// 			if(auto) {
+		// 				auto = false;//鼠标松开不允许拖动
+		// 			}
+		// 		})
+		// 		$(".box-nine").on('click', '.progress', function(e) {  //点击进度条时，进度的变化
+		// 			lastX = e.clientX;
+		// 			var offsetX = $(this).offset().left;
+		// 			$(this).find('.progress-bar').css('width', lastX - offsetX>$(this).width()?$(this).width():lastX-offsetX);
+        //             $(this).find('.progress-circle').css('left', lastX - offsetX>$(this).width()- $(this).find('.progress-circle').width()?$(this).width()- $(this).find('.progress-circle').width():lastX-offsetX);
+        //             var val =$(this).find('.progress-bar').width();
+        //             $(this).parents('.box-nine').find('input').val(Math.ceil(val / 2));
+        //         })
+    </script>
+    <script>
+        var lastX,offset, thats,thewidth=0;
+        var auto=false;
+        $(".box-one").on('mousedown','.progress-circle1',function(e){
+             lastX=e.clientX;
+             e.preventDefault();
+              thats=$(this);
+              thewidth=thats.prev().val() || $("progress").val();
+              auto=true;
+        })
+        $(document).on('mousemove',function(e){
+            if(auto){
+                e.preventDefault();
+                newX=e.clientX;
+                var mcs=newX-lastX;
+                var differ=thats.prev().width()-thats.width();
+                if(mcs>0){
+                     thats.prev().val(thewidth*2+mcs>$("progress").width()?$("progress").width()/2:(thewidth*2+mcs)/2);
+                     thats.css('left',mcs+thewidth*2<differ?mcs+thewidth*2:differ );
+                }else{
+                 thats.prev().val( thewidth+ mcs/2>0?thewidth+ mcs/2:0);
+                thats.css('left',thewidth*2 + mcs - thats.width()> 0 ? thewidth*2 + mcs - thats.width():0)
+                }
+                var val = thats.prev().val() || $("progress").val();
+				thats.parents('.box-one').find('input').val(Math.ceil(val ));//实时将值显示在Input框   这里是模拟音量 0-100的值
+              
+            }
+        })
+        $(document).on('mouseup', function(e) {
+			if(auto) {
+				auto = false;//鼠标松开不允许拖动
+			}
+		})
+        $(".box-one").on('click', 'progress', function (e) {
+                that=$(this);
+                lastX = e.clientX;
+                offset = $(this).offset().left;
+                that.parent().find('.progress-circle1').css('left', lastX - offset>that.width() ? that.width()-$(".progress-circle1").width():lastX - offset);
+                that.val((lastX - offset)/2);
+                that.parent().find('input').val(Math.ceil((lastX - offset)/2));
+        })
+    </script>
+</body>
+</html>
